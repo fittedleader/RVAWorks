@@ -311,7 +311,7 @@ body {
     }
     
     .mission-text p {
-        font-size: 0.5rem;
+        font-size: 5px;
     }
   }
   
@@ -474,7 +474,7 @@ body {
         font-size: 1rem;
     }
     .bottom-right-btn {
-      right: -220px;
+      right: -300px;
   }
 }
   
