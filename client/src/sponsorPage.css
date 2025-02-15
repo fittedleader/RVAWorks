@@ -304,7 +304,7 @@ body {
   }
   
   /* Responsive adjustments */
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 800px) {
     .mission-text {
         width: 100%;
         padding: 0 2px;
@@ -312,6 +312,9 @@ body {
     
     .mission-text p {
         font-size: 5px;
+    }
+    .mission-section p {
+      font-size: 5px;
     }
   }
   
@@ -474,7 +477,7 @@ body {
         font-size: 1rem;
     }
     .bottom-right-btn {
-      right: -500px;
+      right: -50px;
   }
 }
   
