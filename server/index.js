@@ -3,6 +3,8 @@ const { google } = require('googleapis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
+const fs = require('fs');
+const path = require('path');
 
 const app = express();
 
@@ -16,11 +18,20 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-// Google Sheets setup using environment variable
-const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
+// Load Google Sheets credentials from file
+const credentialsPath = path.join(__dirname, 'rvaworksgooglesheetsjson.json');
+let credentials = {};
 
+try {
+    credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
+    console.log("Successfully loaded credentials from JSON file.");
+} catch (error) {
+    console.error("Error loading credentials file:", error);
+}
+
+// Authenticate with Google Sheets API
 const auth = new google.auth.GoogleAuth({
-    credentials, // Use credentials from environment variable
+    credentials, // Use credentials from file
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
@@ -31,9 +42,6 @@ const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew';
 const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Replace with your API key
 const CONSTANT_CONTACT_ACCESS_TOKEN = 'zK5M8v8mpO14wrsXVkuPzjhvnsc1pf_b-2othv3Qmmg'; // Replace with your access token
 const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant Contact List ID
-
-console.log("GOOGLE_SHEETS_CREDENTIALS:", process.env.GOOGLE_SHEETS_CREDENTIALS);
-
 
 // Route for writing data to Google Sheets
 app.post('/write-to-sheet', async (req, res) => {
