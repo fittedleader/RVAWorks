@@ -3,13 +3,12 @@ const { google } = require('googleapis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
-const path = require('path'); // Required for handling file paths
 
 const app = express();
 
 // Enable CORS for both frontend pages
 app.use(cors({
-    origin: ["https://rva-works.vercel.app", "https://rva-works.vercel.app/business"], // Allow both main and business page
+    origin: ["https://rva-works.vercel.app", "https://rva-works.vercel.app/business"],
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type",
     credentials: true
@@ -17,14 +16,16 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-// Google Sheets setup
+// Google Sheets setup using environment variable
+const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS || '{}');
+
 const auth = new google.auth.GoogleAuth({
-    keyFile: path.join(__dirname, 'server', 'rvaworksgooglesheetsjson.json'), // Adjusted path to reflect move to 'server' folder
+    credentials, // Use credentials from environment variable
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
-const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew'; // Replace with your actual Google Sheet ID
+const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew';
 
 // Constant Contact setup
 const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Replace with your API key
@@ -33,16 +34,14 @@ const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant C
 
 // Route for writing data to Google Sheets
 app.post('/write-to-sheet', async (req, res) => {
-    const data = req.body; // Data sent from the React app
+    const data = req.body;
 
     try {
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A1', // Adjust range based on your sheet structure
+            range: 'Sheet1!A1',
             valueInputOption: 'USER_ENTERED',
-            resource: {
-                values: [Object.values(data)],
-            },
+            resource: { values: [Object.values(data)] },
         });
 
         res.status(200).send({ message: "Data successfully written to Google Sheets!", response: response.data });
@@ -61,7 +60,7 @@ app.post('/subscribe', async (req, res) => {
             'https://api.cc.email/v3/contacts/sign_up_form',
             {
                 email_address: email,
-                list_memberships: [CONSTANT_CONTACT_LIST_ID], // Add email to specific list
+                list_memberships: [CONSTANT_CONTACT_LIST_ID],
             },
             {
                 headers: {
@@ -73,12 +72,7 @@ app.post('/subscribe', async (req, res) => {
 
         res.status(200).send({ message: 'Successfully subscribed to Constant Contact!' });
     } catch (error) {
-        console.error('Error subscribing to Constant Contact:', {
-            status: error.response?.status,
-            data: error.response?.data,
-            headers: error.response?.headers,
-            message: error.message,
-        });
+        console.error('Error subscribing to Constant Contact:', error.response?.data || error.message);
         res.status(500).send({ message: 'Failed to subscribe to Constant Contact.', error: error.message });
     }
 });
