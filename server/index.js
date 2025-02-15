@@ -2,51 +2,119 @@ const express = require('express');
 const { google } = require('googleapis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const axios = require('axios');
-
+const axios = require('axios'); // Use Axios for HTTP requests
 const app = express();
 
-// ✅ Fix CORS: Allow specific frontend domain + Preflight requests
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://rva-works.vercel.app"); // Allow frontend
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS"); // Allow these methods
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization"); // Allow headers
-    res.header("Access-Control-Allow-Credentials", "true"); // If using cookies or sessions
-    if (req.method === "OPTIONS") {
-        return res.sendStatus(204); // Handle preflight requests properly
-    }
-    next();
-});
+// Enable CORS for the frontend
+app.use(cors({
+    origin: "https://rva-works.vercel.app", // Allow requests from your frontend
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type",
+    credentials: true // Allow cookies if needed
+}));
 
 app.use(bodyParser.json());
 
-// ✅ Google Sheets setup
+// Google Sheets setup
 const auth = new google.auth.GoogleAuth({
-    keyFile: './src/rvaworksgooglesheetsjson.json',
+    keyFile: './src/rvaworksgooglesheetsjson.json', // Replace with your downloaded JSON file
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
-const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew';
+const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew'; // Replace with your Google Sheet ID
 
-// ✅ Write to Google Sheets Route
+// Constant Contact setup
+const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Replace with your API key
+const CONSTANT_CONTACT_ACCESS_TOKEN = 'zK5M8v8mpO14wrsXVkuPzjhvnsc1pf_b-2othv3Qmmg'; // Replace with your access token
+const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant Contact List ID
+
+// Route for writing data to Google Sheets
 app.post('/write-to-sheet', async (req, res) => {
+    const data = req.body; // Data sent from the React app
+
     try {
-        const data = req.body;
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
-            range: 'Sheet1!A1',
+            range: 'Sheet1!A1', // Adjust range based on your sheet structure
             valueInputOption: 'USER_ENTERED',
-            resource: { values: [Object.values(data)] },
+            resource: {
+                values: [Object.values(data)],
+            },
         });
 
-        res.status(200).json({ message: "Data written to Google Sheets!", response: response.data });
+        res.status(200).send({ message: "Data successfully written to Google Sheets!", response: response.data });
     } catch (error) {
-        console.error("Google Sheets Error:", error);
-        res.status(500).json({ message: 'Failed to write data.', error: error.message });
+        console.error("Error writing to Google Sheets:", error);
+        res.status(500).send({ message: 'Failed to write data to the sheet.', error: error.message });
     }
 });
 
-// ✅ Start the Server
+// Route for subscribing emails to Constant Contact
+app.post('/subscribe', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const response = await axios.post(
+            'https://api.cc.email/v3/contacts/sign_up_form',
+            {
+                email_address: email,
+                list_memberships: [CONSTANT_CONTACT_LIST_ID], // Add email to specific list
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${CONSTANT_CONTACT_ACCESS_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        res.status(200).send({ message: 'Successfully subscribed to Constant Contact!' });
+    } catch (error) {
+        console.error('Error subscribing to Constant Contact:', {
+            status: error.response?.status,
+            data: error.response?.data,
+            headers: error.response?.headers,
+            message: error.message,
+        });
+        res.status(500).send({ message: 'Failed to subscribe to Constant Contact.' });
+    }
+});
+
+// Test Authorization Route for Constant Contact
+app.get('/test-authorization', async (req, res) => {
+    try {
+        const response = await axios.get(
+            'https://api.cc.email/v3/account',
+            {
+                headers: {
+                    Authorization: `Bearer ${CONSTANT_CONTACT_ACCESS_TOKEN}`,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+
+        res.status(200).send({
+            message: 'Authentication successful!',
+            data: response.data,
+        });
+    } catch (error) {
+        console.error('Authorization failed:', error.response?.data || error.message);
+        res.status(401).send({
+            message: 'Authorization failed. Token might be invalid.',
+            error: error.response?.data || error.message,
+        });
+    }
+});
+
+// CORS Error Handling Middleware
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "https://rva-works.vercel.app");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
+
+// Start Server
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
