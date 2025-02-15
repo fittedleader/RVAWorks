@@ -311,10 +311,10 @@ body {
     }
     
     .mission-text p {
-        font-size: 5px;
+      font-size: 0.75rem;
     }
     .mission-section p {
-      font-size: 5px;
+      font-size: 0.75rem;
     }
   }
   
@@ -477,7 +477,7 @@ body {
         font-size: 1rem;
     }
     .bottom-right-btn {
-      right: -110px;
+      right: -150px;
   }
 }
   
