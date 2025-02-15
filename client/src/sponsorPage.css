@@ -280,7 +280,7 @@ body {
   
   
   .mission-section p {
-    font-size: .75rem;
+    font-size: 1rem;
   }
   
   .mission-content {
@@ -297,7 +297,7 @@ body {
   }
   
   .mission-text p {
-    font-size: .75rem;
+    font-size: 1rem;
     line-height: 1.1; /* Reduced from 1.2 */
     margin: 30px auto;
     max-width: 3000px;
@@ -311,10 +311,10 @@ body {
     }
     
     .mission-text p {
-      font-size: 0.75rem;
+      font-size: 1rem;
     }
     .mission-section p {
-      font-size: 0.75rem;
+      font-size: 1rem;
     }
   }
   
