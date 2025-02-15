@@ -23,8 +23,13 @@ const credentialsPath = path.join(__dirname, 'rvaworksgooglesheetsjson.json');
 let credentials = {};
 
 try {
-    credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
-    console.log("Successfully loaded credentials from JSON file.");
+    const rawCredentials = fs.readFileSync(credentialsPath, 'utf8');
+    credentials = JSON.parse(rawCredentials);
+
+    // Ensure private_key is correctly formatted
+    credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+
+    console.log("Successfully loaded and formatted credentials.");
 } catch (error) {
     console.error("Error loading credentials file:", error);
 }
