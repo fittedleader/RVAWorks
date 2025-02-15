@@ -48,6 +48,9 @@ const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Repl
 const CONSTANT_CONTACT_ACCESS_TOKEN = 'zK5M8v8mpO14wrsXVkuPzjhvnsc1pf_b-2othv3Qmmg'; // Replace with your access token
 const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant Contact List ID
 
+console.log("Private Key (first 20 chars):", credentials.private_key.slice(0, 20));
+
+
 // Route for writing data to Google Sheets
 app.post('/write-to-sheet', async (req, res) => {
     const data = req.body;
