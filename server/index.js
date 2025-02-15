@@ -5,14 +5,7 @@ const cors = require('cors');
 const axios = require('axios'); // Use Axios for HTTP requests
 const app = express();
 
-// Enable CORS for the frontend
-app.use(cors({
-    origin: "https://rva-works.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type"],
-    credentials: true
-}));
-
+app.use(cors());
 app.use(bodyParser.json());
 
 // Google Sheets setup
@@ -29,14 +22,10 @@ const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Repl
 const CONSTANT_CONTACT_ACCESS_TOKEN = 'zK5M8v8mpO14wrsXVkuPzjhvnsc1pf_b-2othv3Qmmg'; // Replace with your access token
 const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant Contact List ID
 
-// Root route for testing
-app.get('/', (req, res) => {
-    res.send('Server is running!');
-});
-
 // Route for writing data to Google Sheets
 app.post('/write-to-sheet', async (req, res) => {
     const data = req.body; // Data sent from the React app
+
 
     try {
         const response = await sheets.spreadsheets.values.append({
@@ -47,11 +36,10 @@ app.post('/write-to-sheet', async (req, res) => {
                 values: [Object.values(data)],
             },
         });
-
-        res.status(200).send({ message: "Data successfully written to Google Sheets!", response: response.data });
+        res.status(200).send(response.data);
     } catch (error) {
-        console.error("Error writing to Google Sheets:", error);
-        res.status(500).send({ message: 'Failed to write data to the sheet.', error: error.message });
+        console.error(error);
+        res.status(500).send('Failed to write data to the sheet.');
     }
 });
 
@@ -76,6 +64,7 @@ app.post('/subscribe', async (req, res) => {
 
         res.status(200).send({ message: 'Successfully subscribed to Constant Contact!' });
     } catch (error) {
+        // Log all available error details for debugging
         console.error('Error subscribing to Constant Contact:', {
             status: error.response?.status,
             data: error.response?.data,
@@ -86,7 +75,6 @@ app.post('/subscribe', async (req, res) => {
     }
 });
 
-// Test Authorization Route for Constant Contact
 app.get('/test-authorization', async (req, res) => {
     try {
         const response = await axios.get(
@@ -99,11 +87,13 @@ app.get('/test-authorization', async (req, res) => {
             }
         );
 
+        // If successful, send account info
         res.status(200).send({
             message: 'Authentication successful!',
             data: response.data,
         });
     } catch (error) {
+        // If token is invalid or other error occurs, send error details
         console.error('Authorization failed:', error.response?.data || error.message);
         res.status(401).send({
             message: 'Authorization failed. Token might be invalid.',
@@ -112,9 +102,5 @@ app.get('/test-authorization', async (req, res) => {
     }
 });
 
-// Handle OPTIONS requests for all routes
-app.options('*', cors());
 
-// Start Server
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(3001, () => console.log('Server is running on port 3001'));
