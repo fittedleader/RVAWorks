@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import BusinessPage from './businessPage';
-import SponsorPage from './sponsorPage';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import BusinessPage from "./businessPage";
+import SponsorPage from "./sponsorPage";
 import FilteredCompaniesPage from "./filteredCompaniesPage";
 
 function App() {
@@ -10,8 +10,9 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Set SponsorPage as the homepage */}
+        <Route path="/" element={<SponsorPage />} />
         <Route path="/business" element={<BusinessPage />} />
-        <Route path="/sponsor" element={<SponsorPage />} />
         <Route path="/filtered-companies" element={<FilteredCompaniesPage />} />
       </Routes>
     </Router>

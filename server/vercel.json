@@ -12,13 +12,6 @@
             "destination": "/"
         }
     ],
-    "redirects": [
-        {
-            "source": "/",
-            "destination": "/sponsor",
-            "permanent": true
-        }
-    ],
     "headers": [
         {
             "source": "/api/(.*)",

@@ -154,7 +154,7 @@ function HeroSection() {
             <p className={styles["hero-subtitle"]}>
                 Interested in being a <span style={{ color: 'orange', fontWeight: 'bold'}}>Sponsor</span>? 
             </p>
-            <button className={styles["get-started-btn"]} onClick={() => navigate('/sponsor')}>
+            <button className={styles["get-started-btn"]} onClick={() => navigate('/')}>
               <span style={{fontWeight: 'bold', fontSize: 17.5}}>Sponsor Us</span>
             </button>
         </header>
@@ -1011,7 +1011,7 @@ const handleSubscribe = async () => {
           className="business-btn"
           style={{ backgroundColor: '#4CAF50' }}
           onClick={() => {
-            navigate('/sponsor');
+            navigate('/');
             window.scrollTo(0, 0);
           }}
         >
