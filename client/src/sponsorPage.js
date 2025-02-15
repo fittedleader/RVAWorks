@@ -673,7 +673,7 @@ const handleSubscribe = async () => {
 
     try {
       console.log('Attempting to send email:', email); // Debug log
-      const response = await fetch('http://localhost:3001/subscribe-email', {
+      const response = await fetch('https://rva-works-server.vercel.app/subscribe-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
