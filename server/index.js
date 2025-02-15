@@ -8,7 +8,7 @@ const app = express();
 
 // Enable CORS for both frontend pages
 app.use(cors({
-    origin: ["https://rva-works.vercel.app", "https://rva-works.vercel.app/business"],
+    origin: ["https://rva-works.vercel.app", "https://rva-works.vercel.app/business", "https://rvaworks.org", "https://rvaworks.org/business"],
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type",
     credentials: true
