@@ -280,7 +280,7 @@ body {
   
   
   .mission-section p {
-    font-size: 1.5rem;
+    font-size: .75rem;
   }
   
   .mission-content {
@@ -477,7 +477,7 @@ body {
         font-size: 1rem;
     }
     .bottom-right-btn {
-      right: -50px;
+      right: -85px;
   }
 }
   
