@@ -32,6 +32,7 @@ try {
     console.log("Successfully loaded and formatted credentials.");
 } catch (error) {
     console.error("Error loading credentials file:", error);
+    process.exit(1);  // Exit if credentials can't be loaded
 }
 
 // Authenticate with Google Sheets API
@@ -50,12 +51,25 @@ const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant C
 
 console.log("Private Key (first 20 chars):", credentials.private_key.slice(0, 20));
 
+// Detailed log for auth setup
+console.log("Authenticating with Google Sheets API...");
+
+auth.getClient()
+    .then(client => {
+        console.log("Authentication successful with Google Sheets API!");
+    })
+    .catch(error => {
+        console.error("Error during Google Sheets authentication:", error.message || error);
+        process.exit(1);  // Exit if authentication fails
+    });
 
 // Route for writing data to Google Sheets
 app.post('/write-to-sheet', async (req, res) => {
     const data = req.body;
 
     try {
+        console.log("Attempting to write data to Google Sheets...");
+
         const response = await sheets.spreadsheets.values.append({
             spreadsheetId: SPREADSHEET_ID,
             range: 'Sheet1!A1',
@@ -63,9 +77,10 @@ app.post('/write-to-sheet', async (req, res) => {
             resource: { values: [Object.values(data)] },
         });
 
+        console.log("Successfully wrote data to Google Sheets.");
         res.status(200).send({ message: "Data successfully written to Google Sheets!", response: response.data });
     } catch (error) {
-        console.error("Error writing to Google Sheets:", error);
+        console.error("Error writing to Google Sheets:", error.message || error);
         res.status(500).send({ message: 'Failed to write data to the sheet.', error: error.message });
     }
 });
@@ -75,6 +90,8 @@ app.post('/subscribe', async (req, res) => {
     const { email } = req.body;
 
     try {
+        console.log(`Attempting to subscribe email: ${email} to Constant Contact...`);
+
         const response = await axios.post(
             'https://api.cc.email/v3/contacts/sign_up_form',
             {
@@ -89,6 +106,7 @@ app.post('/subscribe', async (req, res) => {
             }
         );
 
+        console.log("Successfully subscribed to Constant Contact.");
         res.status(200).send({ message: 'Successfully subscribed to Constant Contact!' });
     } catch (error) {
         console.error('Error subscribing to Constant Contact:', error.response?.data || error.message);
@@ -99,6 +117,8 @@ app.post('/subscribe', async (req, res) => {
 // Test Authorization Route for Constant Contact
 app.get('/test-authorization', async (req, res) => {
     try {
+        console.log("Testing Constant Contact authorization...");
+
         const response = await axios.get(
             'https://api.cc.email/v3/account',
             {
@@ -109,6 +129,7 @@ app.get('/test-authorization', async (req, res) => {
             }
         );
 
+        console.log("Authorization successful for Constant Contact.");
         res.status(200).send({
             message: 'Authentication successful!',
             data: response.data,
