@@ -297,7 +297,7 @@ body {
   }
   
   .mission-text p {
-    font-size: 1.5rem;
+    font-size: .75rem;
     line-height: 1.1; /* Reduced from 1.2 */
     margin: 30px auto;
     max-width: 3000px;
@@ -477,7 +477,7 @@ body {
         font-size: 1rem;
     }
     .bottom-right-btn {
-      right: -85px;
+      right: -110px;
   }
 }
   
@@ -1418,7 +1418,7 @@ body {
     }
 
     .mission-text p {
-        font-size: 0.9rem; /* Smaller font size */
+        font-size: 0.5rem; /* Smaller font size */
         line-height: 1.2;
         margin: 15px auto;
     }
