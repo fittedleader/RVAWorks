@@ -2,27 +2,29 @@ const express = require('express');
 const { google } = require('googleapis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const axios = require('axios'); // Use Axios for HTTP requests
+const axios = require('axios');
+const path = require('path'); // Required for handling file paths
+
 const app = express();
 
-// Enable CORS for the frontend
+// Enable CORS for both frontend pages
 app.use(cors({
-    origin: "https://rva-works.vercel.app", // Allow requests from your frontend
+    origin: ["https://rva-works.vercel.app", "https://rva-works.vercel.app/business"], // Allow both main and business page
     methods: "GET,POST,PUT,DELETE",
     allowedHeaders: "Content-Type",
-    credentials: true // Allow cookies if needed
+    credentials: true
 }));
 
 app.use(bodyParser.json());
 
 // Google Sheets setup
 const auth = new google.auth.GoogleAuth({
-    keyFile: './src/rvaworksgooglesheetsjson.json', // Replace with your downloaded JSON file
+    keyFile: path.join(__dirname, 'server', 'rvaworksgooglesheetsjson.json'), // Adjusted path to reflect move to 'server' folder
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
 const sheets = google.sheets({ version: 'v4', auth });
-const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew'; // Replace with your Google Sheet ID
+const SPREADSHEET_ID = '1es8VQeum21udzQMSS-xswd6IOF7drcYZSFsND5jGRew'; // Replace with your actual Google Sheet ID
 
 // Constant Contact setup
 const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Replace with your API key
@@ -77,7 +79,7 @@ app.post('/subscribe', async (req, res) => {
             headers: error.response?.headers,
             message: error.message,
         });
-        res.status(500).send({ message: 'Failed to subscribe to Constant Contact.' });
+        res.status(500).send({ message: 'Failed to subscribe to Constant Contact.', error: error.message });
     }
 });
 
@@ -105,14 +107,6 @@ app.get('/test-authorization', async (req, res) => {
             error: error.response?.data || error.message,
         });
     }
-});
-
-// CORS Error Handling Middleware
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://rva-works.vercel.app");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
 });
 
 // Start Server
