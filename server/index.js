@@ -7,10 +7,10 @@ const app = express();
 
 // Enable CORS for the frontend
 app.use(cors({
-    origin: "https://rva-works.vercel.app", // Allow requests from your frontend
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type",
-    credentials: true // Allow cookies if needed
+    origin: "https://rva-works.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"],
+    credentials: true
 }));
 
 app.use(bodyParser.json());
@@ -107,13 +107,7 @@ app.get('/test-authorization', async (req, res) => {
     }
 });
 
-// CORS Error Handling Middleware
-app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "https://rva-works.vercel.app");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "Content-Type");
-    next();
-});
+app.options('*', cors());
 
 // Start Server
 const PORT = process.env.PORT || 3001;
