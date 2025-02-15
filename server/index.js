@@ -3,8 +3,6 @@ const { google } = require('googleapis');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
 
@@ -18,26 +16,18 @@ app.use(cors({
 
 app.use(bodyParser.json());
 
-// Load Google Sheets credentials from file
-const credentialsPath = path.join(__dirname, 'rvaworksgooglesheetsjson.json');
-let credentials = {};
-
-try {
-    const rawCredentials = fs.readFileSync(credentialsPath, 'utf8');
-    credentials = JSON.parse(rawCredentials);
-
-    // Ensure private_key is correctly formatted
-    credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
-
-    console.log("Successfully loaded and formatted credentials.");
-} catch (error) {
-    console.error("Error loading credentials file:", error);
-    process.exit(1);  // Exit if credentials can't be loaded
-}
+// Load Google Sheets credentials from environment variables
+const credentials = {
+    type: "service_account",
+    project_id: process.env.GCP_PROJECT_ID, 
+    private_key: process.env.GCP_PRIVATE_KEY?.replace(/\\n/g, '\n'), // Fix newline formatting
+    client_email: process.env.GCP_CLIENT_EMAIL,
+    token_uri: process.env.GCP_TOKEN_URI
+};
 
 // Authenticate with Google Sheets API
 const auth = new google.auth.GoogleAuth({
-    credentials, // Use credentials from file
+    credentials, // Use credentials from env vars
     scopes: ['https://www.googleapis.com/auth/spreadsheets'],
 });
 
@@ -49,18 +39,21 @@ const CONSTANT_CONTACT_API_KEY = '7251540c-5f77-40dd-b3d7-32f2a76d13f1'; // Repl
 const CONSTANT_CONTACT_ACCESS_TOKEN = 'zK5M8v8mpO14wrsXVkuPzjhvnsc1pf_b-2othv3Qmmg'; // Replace with your access token
 const CONSTANT_CONTACT_LIST_ID = 'Open Trellis'; // Replace with your Constant Contact List ID
 
-console.log("Private Key (first 20 chars):", credentials.private_key.slice(0, 20));
+// Debugging - Ensure env variables are loaded
+console.log("Google Credentials Loaded:", {
+    project_id: credentials.project_id,
+    client_email: credentials.client_email
+});
 
-// Detailed log for auth setup
 console.log("Authenticating with Google Sheets API...");
 
 auth.getClient()
     .then(client => {
-        console.log("Authentication successful with Google Sheets API!");
+        console.log("✅ Authentication successful with Google Sheets API!");
     })
     .catch(error => {
-        console.error("Error during Google Sheets authentication:", error.message || error);
-        process.exit(1);  // Exit if authentication fails
+        console.error("❌ Error during Google Sheets authentication:", error.message || error);
+        process.exit(1);
     });
 
 // Route for writing data to Google Sheets
@@ -77,10 +70,10 @@ app.post('/write-to-sheet', async (req, res) => {
             resource: { values: [Object.values(data)] },
         });
 
-        console.log("Successfully wrote data to Google Sheets.");
+        console.log("✅ Successfully wrote data to Google Sheets.");
         res.status(200).send({ message: "Data successfully written to Google Sheets!", response: response.data });
     } catch (error) {
-        console.error("Error writing to Google Sheets:", error.message || error);
+        console.error("❌ Error writing to Google Sheets:", error.message || error);
         res.status(500).send({ message: 'Failed to write data to the sheet.', error: error.message });
     }
 });
@@ -106,10 +99,10 @@ app.post('/subscribe', async (req, res) => {
             }
         );
 
-        console.log("Successfully subscribed to Constant Contact.");
+        console.log("✅ Successfully subscribed to Constant Contact.");
         res.status(200).send({ message: 'Successfully subscribed to Constant Contact!' });
     } catch (error) {
-        console.error('Error subscribing to Constant Contact:', error.response?.data || error.message);
+        console.error('❌ Error subscribing to Constant Contact:', error.response?.data || error.message);
         res.status(500).send({ message: 'Failed to subscribe to Constant Contact.', error: error.message });
     }
 });
@@ -129,13 +122,13 @@ app.get('/test-authorization', async (req, res) => {
             }
         );
 
-        console.log("Authorization successful for Constant Contact.");
+        console.log("✅ Authorization successful for Constant Contact.");
         res.status(200).send({
             message: 'Authentication successful!',
             data: response.data,
         });
     } catch (error) {
-        console.error('Authorization failed:', error.response?.data || error.message);
+        console.error('❌ Authorization failed:', error.response?.data || error.message);
         res.status(401).send({
             message: 'Authorization failed. Token might be invalid.',
             error: error.response?.data || error.message,
@@ -145,4 +138,4 @@ app.get('/test-authorization', async (req, res) => {
 
 // Start Server
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server is running on port ${PORT}`));
