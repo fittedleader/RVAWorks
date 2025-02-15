@@ -1,0 +1,104 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+    background-color: #E9EEF1;
+    position: fixed;
+    top: 0;
+    width: 97%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .logo {
+    width: 200px; /* Increased logo size */
+    height: auto;
+    margin-top: -15px;
+    margin-bottom: -20px;
+  }
+
+
+.container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.backButton {
+    width: 8%;
+    background-color: #ff8c00; /* Orange button */
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 100px;
+    transition: background-color 0.3s, transform 0.5s ease;
+    border: none;
+}
+
+.backButton:hover {
+    background-color: #e07b00; /* Darker orange on hover */
+    transform: scale(1.1)
+}
+
+button.connect-button {
+    
+    padding: 12px;
+    border: none;
+    cursor: pointer;
+    
+    margin-top: 0px;
+    padding: 0.8rem 0.5rem;
+    border: none;
+    
+    font-size: 1rem;
+    cursor: pointer;
+    
+    
+  }
+  
+  .connect-button:hover {
+    
+  }
+
+.title {
+    
+    font-size: 3rem;
+    color: #3a5d33;
+    text-align: center;
+    margin-top: 20px;
+        
+
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.table th {
+    background-color: #f4a261;
+    color: white;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.noResults {
+    text-align: center;
+    font-size: 18px;
+    color: #777;
+}
