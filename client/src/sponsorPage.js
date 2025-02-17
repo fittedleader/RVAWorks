@@ -818,6 +818,9 @@ const handleSubscribe = async () => {
           </p>
           <p>P.O. Box 61025 Richmond VA</p>
         </div>
+        <div className="coded">
+          This website is coded by <a href="https://code4cause.org" target="_blank" rel="noopener noreferrer" className="code4cause-link">Code4Cause</a>
+        </div>
       </div>
 
       {/* Modal Component */}
