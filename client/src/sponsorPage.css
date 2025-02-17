@@ -507,7 +507,7 @@ body {
 
 .program-description p{
   color: black; /* Text color */
-  font-size: 12px; /* Adjust font size as needed */
+  font-size: 11px; /* Adjust font size as needed */
   line-height: 1.5; /* Line height for better readability */
   margin-bottom: -15px;
 }
