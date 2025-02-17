@@ -1679,30 +1679,33 @@ body {
   font-size: 16px;
   margin-top: 10px;
   font-family: 'Poppins', sans-serif;
-  animation: glow 1.5s infinite;
-}
-
-@keyframes glow {
-  from {
-    text-shadow: 0 0 5px white;
-  }
-  to {
-    text-shadow: 0 0 10px white, 0 0 15px white, 0 0 20px white;
-  }
+  text-shadow: 0 0 10px white, 0 0 15px white, 0 0 20px white;
 }
 
 .code4cause-link {
   color: #add8e6; /* light blue */
   text-decoration: none;
   font-family: 'Poppins', sans-serif;
-  animation: glow-blue 1.5s infinite;
+  text-shadow: 0 0 10px #add8e6, 0 0 15px #add8e6, 0 0 20px #add8e6;
+  cursor: pointer;
+  position: relative;
 }
 
-@keyframes glow-blue {
-  from {
-    text-shadow: 0 0 5px #add8e6;
-  }
-  to {
-    text-shadow: 0 0 10px #add8e6, 0 0 15px #add8e6, 0 0 20px #add8e6;
-  }
+.code4cause-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  display: block;
+  margin-top: 5px;
+  right: 0;
+  background: #add8e6;
+  transition: width 0.3s ease;
+  -webkit-transition: width 0.3s ease;
+}
+
+.code4cause-link:hover::after {
+  width: 100%;
+  left: 0;
+  background: #add8e6;
 }
